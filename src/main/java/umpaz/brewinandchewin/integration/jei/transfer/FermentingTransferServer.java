@@ -2,7 +2,6 @@ package umpaz.brewinandchewin.integration.jei.transfer;
 
 import com.mojang.datafixers.util.Either;
 import com.mojang.datafixers.util.Pair;
-import net.minecraft.client.Minecraft;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.Slot;
@@ -331,7 +330,7 @@ public class FermentingTransferServer {
             ItemStack stack = slotStack.copy();
 
             int fluidStackAmount = 1;
-            List<KegPouringRecipe> pouringRecipes = Minecraft.getInstance().level.getRecipeManager().getAllRecipesFor(BnCRecipeTypes.KEG_POURING.get()).stream().filter(kegPouringRecipe -> (pouringRecipeSource.left().isEmpty() || kegPouringRecipe.canFill()) && kegPouringRecipe.getFluid(stack).isFluidEqual(pouringRecipeSource.map(KegFermentingRecipe::getFluidIngredient, menu -> menu.kegTank.getFluid()))).toList();
+            List<KegPouringRecipe> pouringRecipes = player.level().getRecipeManager().getAllRecipesFor(BnCRecipeTypes.KEG_POURING.get()).stream().filter(kegPouringRecipe -> (pouringRecipeSource.left().isEmpty() || kegPouringRecipe.canFill()) && kegPouringRecipe.getFluid(stack).isFluidEqual(pouringRecipeSource.map(KegFermentingRecipe::getFluidIngredient, menu -> menu.kegTank.getFluid()))).toList();
             Optional<KegPouringRecipe> optionalData = pouringRecipes.stream().filter(pouring -> {
                 if (pouring.isStrict())
                     return ItemStack.isSameItemSameTags(stack, pouringRecipeSource.map(ignored -> pouring.getOutput(), ignored -> pouring.getContainer()));
