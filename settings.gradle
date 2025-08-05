@@ -2,4 +2,4 @@ pluginManagement {
     repositories {
         gradlePluginPortal()
     }
-} 
+}

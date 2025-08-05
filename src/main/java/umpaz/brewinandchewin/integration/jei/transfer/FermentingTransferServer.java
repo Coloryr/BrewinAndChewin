@@ -7,6 +7,7 @@ import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import umpaz.brewinandchewin.common.block.entity.KegBlockEntity;
@@ -84,7 +85,7 @@ public class FermentingTransferServer {
 
         boolean sameFluid = recipe.getFluidIngredient() != null && recipe.getFluidIngredient().isFluidEqual(kegMenu.kegTank.getFluid());
 
-        List<ItemStack> clearedFluidItems = extractFromFluidTank(emptyingSlotToTakenStacks, kegMenu, false, null);
+        List<ItemStack> clearedFluidItems = extractFromFluidTank(player.level(), emptyingSlotToTakenStacks, kegMenu, false, null);
 
 
         if (sameFluid && !maxTransfer)
@@ -92,7 +93,7 @@ public class FermentingTransferServer {
         else
             stowItems(player, inventorySlots, clearedFluidItems);
 
-        List<ItemStack> fluidItems = extractFromFluidTank(fluidSlotToTakenStacks, kegMenu, true, !maxTransfer ? recipe : null);
+        List<ItemStack> fluidItems = extractFromFluidTank(player.level(), fluidSlotToTakenStacks, kegMenu, true, !maxTransfer ? recipe : null);
 
         List<ItemStack> clearedCraftingItems = clearCraftingGrid(craftingSlots, player);
 
@@ -357,6 +358,7 @@ public class FermentingTransferServer {
     }
 
     private static List<ItemStack> extractFromFluidTank(
+            Level level,
             List<ItemStack> emptyingStacks,
             KegMenu kegMenu,
             boolean insert,
@@ -373,7 +375,7 @@ public class FermentingTransferServer {
 
             int toExtract = stack.getCount();
             if (recipe != null && recipe.getFluidIngredient() != null) {
-                List<KegPouringRecipe> pouringRecipes = Minecraft.getInstance().level.getRecipeManager().getAllRecipesFor(BnCRecipeTypes.KEG_POURING.get()).stream().filter(kegPouringRecipe -> (!insert || kegPouringRecipe.canFill()) && kegPouringRecipe.getFluid(stack).isFluidEqual(recipe.getFluidIngredient())).toList();
+                List<KegPouringRecipe> pouringRecipes = level.getRecipeManager().getAllRecipesFor(BnCRecipeTypes.KEG_POURING.get()).stream().filter(kegPouringRecipe -> (!insert || kegPouringRecipe.canFill()) && kegPouringRecipe.getFluid(stack).isFluidEqual(recipe.getFluidIngredient())).toList();
                 Optional<KegPouringRecipe> optionalData = pouringRecipes.stream().filter(pouring -> {
                     if (pouring.isStrict())
                         return ItemStack.isSameItemSameTags(stack, pouring.getOutput());
